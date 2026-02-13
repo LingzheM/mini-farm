@@ -1,0 +1,17 @@
+{
+  "name": "mini-farm",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build"
+  },
+  "dependencies": {
+    "pixi.js": "^7.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.33",
+    "typescript": "^5.3.3",
+    "vite": "^5.4.21"
+  }
+}
