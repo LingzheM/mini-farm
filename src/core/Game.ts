@@ -2,11 +2,13 @@ import { Application } from 'pixi.js';
 import { GAME_CONFIG } from '../utils/Constants';
 import { EventBus } from './EventBus';
 import type { GameState, IGameSystem } from '../types';
+import { GridSystem } from '../systems/GridSystem'; // 新增
 
 export class Game {
   public app: Application;
   public eventBus: EventBus;
   public state: GameState;
+  public gridSystem: GridSystem;
   
   private systems: IGameSystem[] = [];
   private lastTime: number = 0;
@@ -23,6 +25,8 @@ export class Game {
     
     this.eventBus = new EventBus();
     this.state = this.createInitialState();
+
+    this.gridSystem = new GridSystem(this.app);
   }
 
   private createInitialState(): GameState {
@@ -55,6 +59,12 @@ export class Game {
    */
   init(): void {
     document.body.appendChild(this.app.view as HTMLCanvasElement);
+
+    // 初始化世界地图
+    this.gridSystem.initWorld(this.state);
+
+    // 注册网格
+    this.registerSystem(this.gridSystem);
     
     console.log('🎮 Game initialized');
   }

@@ -1,21 +1,16 @@
 import { Game } from './core/Game';
-import { DebugSystem } from './core/DebugSystem';
 
 function main() {
   const game = new Game();
   
   try {
-    game.init();
-    
-    // 注册调试系统
-    game.registerSystem(new DebugSystem(game.app));
-    
+    game.init();    
     game.start();
     
     // 暴露到全局,方便调试
     (window as any).game = game;
     
-    console.log('👀 Watch the red box bounce!');
+    console.log('🗺️  Use console: game.state.world.tiles to inspect the world');
     
   } catch (error) {
     console.error('Failed to initialize game:', error);
