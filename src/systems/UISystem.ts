@@ -24,7 +24,7 @@ export class UISystem implements IGameSystem {
     }
 
     destroy(): void {
-        this.hud.destory();
+        this.hud.destroy();
         console.log('📊 UI system destroyed');
     }
 }
