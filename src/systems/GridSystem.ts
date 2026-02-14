@@ -116,23 +116,6 @@ export class GridSystem implements IGameSystem {
         }
     }
 
-    /**
-     * 
-     * @param tile 根据瓦片类型返回颜色
-     * @returns 
-     */
-    private getTileColor(tile: TileData): number {
-        switch(tile.type) {
-            case 'grass':
-                return 0x8BC34A;
-            case 'soil':
-                return 0x8D6E63;
-            case 'planted':
-                return 0x6D4C41;
-            default:
-                return 0xCCCCCC;
-        }
-    }
 
     static pixelToGrid(pixelX: number, pixelY: number): { x: number; y: number } {
         return {
@@ -197,6 +180,29 @@ export class GridSystem implements IGameSystem {
         this.graphics.beginFill(color);
         this.graphics.drawRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         this.graphics.endFill();
+    }
+
+    private getTileColor(tile: TileData): number {
+        switch(tile.type) {
+            case "grass":
+                return 0x8BC34A;
+            case "soil":
+                return tile.watered ? 0x6D4C41 : 0x8D6E63;
+            case "planted":
+                if (tile.crop) {
+                    // 根据生长阶段显示不同颜色
+                    const colors = [
+                        0x795548, // 阶段0: 深棕色(种子)
+                        0x9E9D24, // 阶段1: 黄绿色(幼苗)
+                        0x689F38, // 阶段2: 绿色(生长中)
+                        0xFFEB3B, // 阶段3: 金黄色(成熟)
+                    ];
+                    return colors[tile.crop.growthStage];
+                }
+                return 0x6D4C41;
+            default:
+                return 0xCCCCCC;
+        }
     }
 
     update(deltaTime: number, state: GameState): void {

@@ -1,5 +1,6 @@
 import type { IGameSystem, GameState } from '../types';
 import type { EventBus } from '../core/EventBus';
+import { FarmSystem } from './FarmSystem';
 
 /**
  * 时间系统 - 管理游戏内时间流逝
@@ -12,6 +13,7 @@ import type { EventBus } from '../core/EventBus';
  */
 export class TimeSystem implements IGameSystem {
   private eventBus: EventBus;
+  private farmSystem: FarmSystem | null = null;
   
   // 时间累加器 (毫秒)
   private accumulator: number = 0;
@@ -28,6 +30,10 @@ export class TimeSystem implements IGameSystem {
     this.eventBus = eventBus;
     console.log('⏰ Time system initialized');
     console.log(`   Time scale: 1 real second = ${60} game minutes`);
+  }
+
+  setFarmSystem(farmSystem: FarmSystem): void {
+    this.farmSystem = farmSystem;
   }
 
   update(deltaTime: number, state: GameState): void {
@@ -117,7 +123,7 @@ export class TimeSystem implements IGameSystem {
    * 每小时触发
    */
   private onHourChange(state: GameState): void {
-    console.log(`⏰ Hour changed: ${this.formatTime(state)}`);
+    // console.log(`⏰ Hour changed: ${this.formatTime(state)}`);
     
     // TODO: 这里可以触发作物生长检查等逻辑
     // this.eventBus.emit({ type: 'HOUR_PASSED', data: state.time });
@@ -147,7 +153,7 @@ export class TimeSystem implements IGameSystem {
    * 输出当前时间
    */
   private logTime(state: GameState): void {
-    console.log(`⏰ ${this.formatTime(state)}`);
+    // console.log(`⏰ ${this.formatTime(state)}`);
   }
 
   /**

@@ -6,6 +6,7 @@ import { GridSystem } from '../systems/GridSystem'; // 新增
 import { PlayerSystem } from '../systems/PlayerSystem'; // 新增
 import { InputSystem } from '../systems/InputSystem';
 import { TimeSystem } from '../systems/TimeSystem';
+import { FarmSystem } from '../systems/FarmSystem';
 
 export class Game {
   public app: Application;
@@ -14,6 +15,7 @@ export class Game {
   public gridSystem: GridSystem;
   public inputSystem: InputSystem;
   public timeSystem: TimeSystem;
+  public farmSystem: FarmSystem;
   
   private systems: IGameSystem[] = [];
   private lastTime: number = 0;
@@ -34,6 +36,7 @@ export class Game {
     this.gridSystem = new GridSystem(this.app);
     this.inputSystem = new InputSystem();
     this.timeSystem = new TimeSystem(this.eventBus);
+    this.farmSystem = new FarmSystem(this.eventBus, this.inputSystem, this.gridSystem);
   }
 
   private createInitialState(): GameState {
@@ -43,7 +46,7 @@ export class Game {
         hour: 6,
         minute: 0,
         totalMinutes: 0,
-        timeScale: 60,
+        timeScale: 10,
       },
       player: {
         gridX: 10,
@@ -78,6 +81,11 @@ export class Game {
     this.registerSystem(new PlayerSystem(this.app, this.inputSystem));
     // 注册时间系统
     this.registerSystem(this.timeSystem);
+    // 注册耕种系统
+    this.registerSystem(this.farmSystem);
+
+    // 让时间系统知道农场系统
+    this.timeSystem.setFarmSystem(this.farmSystem);
 
     console.log('🎮 Game initialized');
     console.log('👤 Player spawned at grid (10, 7)');

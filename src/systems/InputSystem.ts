@@ -13,12 +13,15 @@ export class InputSystem implements IGameSystem {
 
     public actionCommand: 'use_tool' | 'switch_tool' | null = null;
 
+    // 记录上一帧的space状态
+    private lastSpacePressed: boolean = false;
+
     constructor() {
         this.setupEventListeners();
         console.log('⌨️  Input system initialized');
-        console.log('   WASD/Arrow Keys: Move (not yet implemented)');
-        console.log('   Space: Use tool (not yet implemented)');
-        console.log('   E: Switch tool (not yet implemented)');
+        console.log('   WASD/Arrow Keys: Move');
+        console.log('   Space: Use tool');
+        console.log('   E: Switch tool');
     }
 
     private setupEventListeners(): void {
@@ -52,6 +55,7 @@ export class InputSystem implements IGameSystem {
     }
 
     update(deltaTime: number, state: GameState): void {
+        // 清空上一帧的指令
         this.moveCommand = null;
         this.actionCommand = null;
 
@@ -65,15 +69,22 @@ export class InputSystem implements IGameSystem {
             this.moveCommand = 'right';
         }
 
-        if (this.isKeyPressed(' ')) {
+        const spacePressed = this.isKeyPressed(' ');
+        if (spacePressed && !this.lastSpacePressed) {
             this.actionCommand = 'use_tool';
-        } else if (this.isKeyPressed('e')) {
+            console.log(`⚡ Action command: use_tool`);
+
+        }
+        // 更新上一帧状态
+        this.lastSpacePressed = spacePressed;
+
+        if (this.isKeyPressed('e')) {
             this.actionCommand = 'switch_tool';
         }
 
-        if (this.moveCommand) {
-            console.log(`➡️  Move command: ${this.moveCommand}`);
-        }
+        // if (this.moveCommand) {
+        //    console.log(`➡️  Move command: ${this.moveCommand}`);
+        // }
         if (this.actionCommand) {
             console.log(`⚡ Action command: ${this.actionCommand}`);
         }
