@@ -4,12 +4,14 @@ import { EventBus } from './EventBus';
 import type { GameState, IGameSystem } from '../types';
 import { GridSystem } from '../systems/GridSystem'; // 新增
 import { PlayerSystem } from '../systems/PlayerSystem'; // 新增
+import { InputSystem } from '../systems/InputSystem';
 
 export class Game {
   public app: Application;
   public eventBus: EventBus;
   public state: GameState;
   public gridSystem: GridSystem;
+  public inputSystem: InputSystem;
   
   private systems: IGameSystem[] = [];
   private lastTime: number = 0;
@@ -28,6 +30,7 @@ export class Game {
     this.state = this.createInitialState();
 
     this.gridSystem = new GridSystem(this.app);
+    this.inputSystem = new InputSystem();
   }
 
   private createInitialState(): GameState {
@@ -66,6 +69,8 @@ export class Game {
 
     // 注册网格
     this.registerSystem(this.gridSystem);
+    // 注册输入
+    this.registerSystem(this.inputSystem);
 
     // 注册玩家系统
     this.registerSystem(new PlayerSystem(this.app));

@@ -18,6 +18,6 @@ export class PlayerSystem implements IGameSystem {
     }
 
     destroy(): void {
-        this.player.destory();
+        this.player.destroy();
     }
 }
