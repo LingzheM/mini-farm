@@ -73,7 +73,7 @@ export class Game {
     this.registerSystem(this.inputSystem);
 
     // 注册玩家系统
-    this.registerSystem(new PlayerSystem(this.app));
+    this.registerSystem(new PlayerSystem(this.app, this.inputSystem));
     
     console.log('🎮 Game initialized');
     console.log('👤 Player spawned at grid (10, 7)');
