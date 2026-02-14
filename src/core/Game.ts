@@ -7,6 +7,7 @@ import { PlayerSystem } from '../systems/PlayerSystem'; // 新增
 import { InputSystem } from '../systems/InputSystem';
 import { TimeSystem } from '../systems/TimeSystem';
 import { FarmSystem } from '../systems/FarmSystem';
+import { UISystem } from '../systems/UISystem';
 
 export class Game {
   public app: Application;
@@ -83,6 +84,8 @@ export class Game {
     this.registerSystem(this.timeSystem);
     // 注册耕种系统
     this.registerSystem(this.farmSystem);
+    // 注册UI系统
+    this.registerSystem(new UISystem(this.app, this.farmSystem));
 
     // 让时间系统知道农场系统
     this.timeSystem.setFarmSystem(this.farmSystem);
@@ -100,6 +103,7 @@ export class Game {
     this.lastTime = performance.now();
     this.gameLoop();
     console.log('▶️  Game started');
+    console.log('⏰ Time is flowing...');
   }
 
   private gameLoop = (): void => {

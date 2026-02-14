@@ -13,6 +13,8 @@ function main() {
     console.log('');
     console.log('🎮 ===== MINI FARM GAME =====');
     console.log('');
+    console.log('✨ COMPLETE! All systems running!');
+    console.log('');
     console.log('🚶 MOVEMENT:');
     console.log('   WASD or Arrow Keys - Move');
     console.log('');
@@ -21,6 +23,9 @@ function main() {
     console.log('   [2] - Equip Seeds (种子)');
     console.log('   [3] - Equip Water Can (水壶)');
     console.log('   [Space] - Use tool');
+    console.log('');
+    console.log('📊 UI:');
+    console.log('   Top-left panel shows time, energy, tool');
     console.log('');
     console.log('📖 HOW TO FARM:');
     console.log('   1. Face grass, press [1] then [Space] to till soil');

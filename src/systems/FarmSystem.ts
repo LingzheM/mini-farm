@@ -262,4 +262,12 @@ export class FarmSystem implements IGameSystem {
     destroy(): void {
         console.log('🌱 Farm system destroyed');
     }
+
+    /**
+     * 
+     * @returns 获取当前工具
+     */
+    public getCurrentTool(): 'hoe' | 'seeds' | 'waterCan' {
+        return this.currentTool;
+    }
 }
