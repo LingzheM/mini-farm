@@ -3,6 +3,7 @@ import { GAME_CONFIG } from '../utils/Constants';
 import { EventBus } from './EventBus';
 import type { GameState, IGameSystem } from '../types';
 import { GridSystem } from '../systems/GridSystem'; // 新增
+import { PlayerSystem } from '../systems/PlayerSystem'; // 新增
 
 export class Game {
   public app: Application;
@@ -65,8 +66,13 @@ export class Game {
 
     // 注册网格
     this.registerSystem(this.gridSystem);
+
+    // 注册玩家系统
+    this.registerSystem(new PlayerSystem(this.app));
     
     console.log('🎮 Game initialized');
+    console.log('👤 Player spawned at grid (10, 7)');
+
   }
 
   registerSystem(system: IGameSystem): void {

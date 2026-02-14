@@ -10,8 +10,10 @@ function main() {
     // 暴露到全局,方便调试
     (window as any).game = game;
     
-    console.log('🗺️  Use console: game.state.world.tiles to inspect the world');
-    
+    console.log('👤 You can modify player position in console:');
+    console.log('   game.state.player.gridX = 15');
+    console.log('   game.state.player.direction = "up"');
+        
   } catch (error) {
     console.error('Failed to initialize game:', error);
   }
