@@ -7,6 +7,7 @@ import { PlayerSystem } from '../systems/PlayerSystem'; // 新增
 import { InputSystem } from '../systems/InputSystem';
 import { TimeSystem } from '../systems/TimeSystem';
 import { FarmSystem } from '../systems/FarmSystem';
+import { InventorySystem } from '../systems/InventorySystem';
 import { UISystem } from '../systems/UISystem';
 
 export class Game {
@@ -17,6 +18,9 @@ export class Game {
   public inputSystem: InputSystem;
   public timeSystem: TimeSystem;
   public farmSystem: FarmSystem;
+  public inventorySystem: InventorySystem;
+  public paused: boolean = false; // 新增: 暂停状态
+
   
   private systems: IGameSystem[] = [];
   private lastTime: number = 0;
@@ -37,7 +41,8 @@ export class Game {
     this.gridSystem = new GridSystem(this.app);
     this.inputSystem = new InputSystem();
     this.timeSystem = new TimeSystem(this.eventBus);
-    this.farmSystem = new FarmSystem(this.eventBus, this.inputSystem, this.gridSystem);
+    this.inventorySystem = new InventorySystem(this.eventBus);
+    this.farmSystem = new FarmSystem(this.eventBus, this.inputSystem, this.gridSystem, this.inventorySystem);
   }
 
   private createInitialState(): GameState {
@@ -62,6 +67,11 @@ export class Game {
         width: 20,
         height: 15,
       },
+      inventory: {
+        slots: Array(24).fill(null),
+        maxSlots: 24,
+        isOpen: false,
+      }
     };
   }
 
@@ -84,14 +94,27 @@ export class Game {
     this.registerSystem(this.timeSystem);
     // 注册耕种系统
     this.registerSystem(this.farmSystem);
+    // 注册背包系统
+    this.registerSystem(this.inventorySystem);
     // 注册UI系统
     this.registerSystem(new UISystem(this.app, this.farmSystem));
 
     // 让时间系统知道农场系统
     this.timeSystem.setFarmSystem(this.farmSystem);
 
+    this.giveStarterItems();
+
     console.log('🎮 Game initialized');
     console.log('👤 Player spawned at grid (10, 7)');
+
+  }
+
+  /**
+   * 给玩家初始物品
+   */
+  private giveStarterItems(): void {
+    this.inventorySystem.addItem('seed_potato', 10, this.state);
+    console.log('🎁 Starter items added to inventory');
 
   }
 
@@ -126,6 +149,22 @@ export class Game {
   };
 
   private update(deltaTime: number): void {
+    // 处理tab键打开背包
+    if (this.inputSystem.openInventory) {
+      this.inventorySystem.toggleInventory(this.state);
+      this.paused = this.state.inventory.isOpen;
+    }
+
+    // 如果游戏暂停(背包打开), 只更新UI系统
+    if (this.paused) {
+      for (const system of this.systems) {
+        if (system instanceof UISystem || system === this.inventorySystem) {
+          system.update(deltaTime, this.state);
+        }
+      }
+      return;
+    }
+
     for (const system of this.systems) {
       system.update(deltaTime, this.state);
     }

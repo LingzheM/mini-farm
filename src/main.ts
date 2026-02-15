@@ -4,41 +4,47 @@ function main() {
   const game = new Game();
   
   try {
-    game.init();    
+    game.init();
     game.start();
     
-    // 暴露到全局,方便调试
     (window as any).game = game;
     
     console.log('');
     console.log('🎮 ===== MINI FARM GAME =====');
     console.log('');
-    console.log('✨ COMPLETE! All systems running!');
+    console.log('✨ NEW: Inventory System Added!');
     console.log('');
     console.log('🚶 MOVEMENT:');
     console.log('   WASD or Arrow Keys - Move');
     console.log('');
+    console.log('🎒 INVENTORY:');
+    console.log('   B - Open/Close inventory (24 slots)');
+    console.log('   You start with 10 potato seeds');
+    console.log('');
     console.log('🌱 FARMING:');
-    console.log('   [1] - Equip Hoe (锄头)');
-    console.log('   [2] - Equip Seeds (种子)');
-    console.log('   [3] - Equip Water Can (水壶)');
-    console.log('   [Space] - Use tool');
+    console.log('   [1] - Hoe (锄头)');
+    console.log('   [2] - Seeds (种子)');
+    console.log('   [3] - Water Can (水壶)');
+    console.log('   [Space] - Use tool / Harvest mature crops');
+    console.log('');
+    console.log('📖 WORKFLOW:');
+    console.log('   1. Till soil (Hoe + Space)');
+    console.log('   2. Plant seeds (Seeds + Space, consumes 1 seed from inventory)');
+    console.log('   3. Water crops (Water Can + Space)');
+    console.log('   4. Wait 3 days');
+    console.log('   5. Harvest (Space on golden crop, adds to inventory)');
     console.log('');
     console.log('📊 UI:');
-    console.log('   Top-left panel shows time, energy, tool');
+    console.log('   Top-left panel: Time, Energy, Tool');
+    console.log('   B: Opens inventory (pauses game)');
     console.log('');
-    console.log('📖 HOW TO FARM:');
-    console.log('   1. Face grass, press [1] then [Space] to till soil');
-    console.log('   2. Press [2] then [Space] to plant seeds');
-    console.log('   3. Press [3] then [Space] to water');
-    console.log('   4. Wait 3 days for crops to grow');
+    console.log('⏰ DEBUG COMMANDS:');
+    console.log('   game.timeSystem.setTime(4, 6, 0, game.state) - Skip to day 4');
+    console.log('   game.inventorySystem.addItem("crop_potato", 10, game.state) - Add items');
+    console.log('   game.state.inventory.slots - View inventory data');
     console.log('');
-    console.log('⏰ TIME:');
-    console.log('   Speed up: game.timeSystem.setTimeScale(120, game.state)');
-    console.log('   Next day: game.timeSystem.setTime(2, 6, 0, game.state)');
-    console.log('');
-
-} catch (error) {
+    
+  } catch (error) {
     console.error('Failed to initialize game:', error);
   }
 }

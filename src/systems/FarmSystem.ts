@@ -1,7 +1,8 @@
-import type { IGameSystem, GameState, TileData, Direction } from "types";
+import type { IGameSystem, GameState, TileData, Direction, ItemType } from "types";
 import type { EventBus } from "core/EventBus";
 import type { InputSystem } from "./InputSystem";
 import { GridSystem } from "./GridSystem";
+import { InventorySystem } from "./InventorySystem";
 
 /**
  * 农场系统——管理土地和作物
@@ -12,6 +13,7 @@ export class FarmSystem implements IGameSystem {
     private eventBus: EventBus;
     private inputSystem: InputSystem;
     private gridSystemRef: GridSystem;
+    private inventorySystem: InventorySystem;
 
     // 工具类型
     private currentTool: 'hoe' | 'seeds' | 'waterCan' = 'hoe';
@@ -21,22 +23,26 @@ export class FarmSystem implements IGameSystem {
     private readonly ENEGY_COST_HOE = 2;
     private readonly ENEGY_COST_PLANT = 1;
     private readonly ENERY_COST_WATER = 1;
+    private readonly ENERY_COST_HARVEST = 2;
 
     private lastKey1Pressed: boolean = false;
     private lastKey2Pressed: boolean = false;
     private lastKey3Pressed: boolean = false;
 
-    constructor(eventBus: EventBus, inputSystem: InputSystem, gridSystem: GridSystem) {
+    constructor(eventBus: EventBus, inputSystem: InputSystem, gridSystem: GridSystem, inventorySystem: InventorySystem) {
         this.eventBus = eventBus;
         this.inputSystem = inputSystem;
         this.gridSystemRef = gridSystem;
+        this.inventorySystem = inventorySystem;
 
         console.log('🌱 Farm system initialized');
         console.log('   [1] Hoe (锄头) - Till the soil');
         console.log('   [2] Seeds (种子) - Plant crops');
         console.log('   [3] Water Can (水壶) - Water crops');
         console.log('   [Space] Use current tool');
-        console.log('🔧 Current tool: Hoe (锄头)'); // 初始工具提示
+        console.log('   [Space on mature crop] Harvest'); // 新增
+        console.log('');
+        console.log('🔧 Current tool: Hoe (锄头)');
 
     }
  
@@ -85,6 +91,12 @@ export class FarmSystem implements IGameSystem {
         }
 
         const tile = state.world.tiles[targetGrid.y][targetGrid.x];
+
+        // 检查是否是成熟作物 -> 收获
+        if (tile.type === 'planted' && tile.crop && tile.crop.growthStage === 3) {
+            this.harvestCrop(targetGrid.x, targetGrid.y, tile, state);
+            return;
+        }
 
         // 根据工具类型执行操作
         switch(this.currentTool) {
@@ -166,6 +178,16 @@ export class FarmSystem implements IGameSystem {
             return;
         }
 
+        // 检查是否有种子
+        const hasSeeds = this.inventorySystem.hasItem('seed_potato', 1, state);
+        if (!hasSeeds) {
+            console.log('🚫 No seeds in inventory');
+            return;
+        }
+
+        // 消耗种子
+        this.inventorySystem.removeItem('seed_potato', 1, state);
+
         // 播种
         const newTile: TileData = {
             type: 'planted',
@@ -222,6 +244,53 @@ export class FarmSystem implements IGameSystem {
             type: 'TILE_CHANGED',
             data: { x, y, tile },
         });
+    }
+
+    /**
+     * 收获成熟作物
+     * @param x 
+     * @param y 
+     * @param tile 
+     * @param state 
+     */
+    private harvestCrop(x: number, y: number, tile: TileData, state: GameState): void {
+        if (!tile.crop) return;
+
+        // 检查体力
+        if (state.player.energy < this.ENERY_COST_HARVEST) {
+            console.log('🚫 Not enough energy to harvest');
+            return;
+        }
+
+        // 根据作物类型获取物品ID
+        const cropItemId: ItemType = tile.crop.type === 'potato' ? 'crop_potato' : 'crop_tomato';
+
+        // 尝试添加到背包
+        const success = this.inventorySystem.addItem(cropItemId, 1, state);
+        if (!success) {
+            console.log('🚫 Inventory full! Cannot harvest.');
+            return;
+        }
+
+        // 成功收获
+        state.player.energy -= this.ENERY_COST_HARVEST;
+
+        // 变回耕地
+        const newTile: TileData = {
+            type: 'soil',
+            watered: false,
+        };
+
+        state.world.tiles[y][x] = newTile;
+        this.gridSystemRef.updateTile(x, y, newTile, state);
+        
+        console.log(`🌾 Harvested ${cropItemId} at (${x}, ${y}), Energy: ${state.player.energy}`);
+
+        this.eventBus.emit({
+            type: 'TILE_CHANGED',
+            data: { x, y, tile: newTile },
+        });
+
     }
 
     /**

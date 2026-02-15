@@ -12,16 +12,20 @@ export class InputSystem implements IGameSystem {
     public moveCommand: Direction | null = null;
 
     public actionCommand: 'use_tool' | 'switch_tool' | null = null;
+    
+    public openInventory: boolean = false;
 
     // 记录上一帧的space状态
     private lastSpacePressed: boolean = false;
+    private lastBPressed: boolean = false;
 
     constructor() {
         this.setupEventListeners();
         console.log('⌨️  Input system initialized');
         console.log('   WASD/Arrow Keys: Move');
         console.log('   Space: Use tool');
-        console.log('   E: Switch tool');
+        console.log('   B: Open/Close inventory'); // 新增
+        console.log('   1/2/3: Switch tool');
     }
 
     private setupEventListeners(): void {
@@ -58,6 +62,7 @@ export class InputSystem implements IGameSystem {
         // 清空上一帧的指令
         this.moveCommand = null;
         this.actionCommand = null;
+        this.openInventory = false;
 
         if (this.isKeyPressed('W') || this.isKeyPressed('arrowup')) {
             this.moveCommand = 'up';
@@ -69,6 +74,7 @@ export class InputSystem implements IGameSystem {
             this.moveCommand = 'right';
         }
 
+        // 处理动作输入 - 边沿检测
         const spacePressed = this.isKeyPressed(' ');
         if (spacePressed && !this.lastSpacePressed) {
             this.actionCommand = 'use_tool';
@@ -78,9 +84,17 @@ export class InputSystem implements IGameSystem {
         // 更新上一帧状态
         this.lastSpacePressed = spacePressed;
 
-        if (this.isKeyPressed('e')) {
-            this.actionCommand = 'switch_tool';
+        // 处理B - 边沿检测
+        const bPressed = this.isKeyPressed('b');
+        if (bPressed && !this.lastBPressed) {
+            this.openInventory = true;
+            console.log(`⚡ Toggle inventory`);
         }
+        this.lastBPressed = bPressed;
+
+        // if (this.isKeyPressed('e')) {
+        //     this.actionCommand = 'switch_tool';
+        // }
 
         // if (this.moveCommand) {
         //    console.log(`➡️  Move command: ${this.moveCommand}`);
