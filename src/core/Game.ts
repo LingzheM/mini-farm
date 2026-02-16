@@ -149,6 +149,7 @@ export class Game {
   };
 
   private update(deltaTime: number): void {
+    this.inputSystem.update(deltaTime, this.state);
     // 处理tab键打开背包
     if (this.inputSystem.openInventory) {
       this.inventorySystem.toggleInventory(this.state);
@@ -158,7 +159,7 @@ export class Game {
     // 如果游戏暂停(背包打开), 只更新UI系统
     if (this.paused) {
       for (const system of this.systems) {
-        if (system instanceof UISystem || system === this.inventorySystem) {
+        if (system instanceof UISystem) {
           system.update(deltaTime, this.state);
         }
       }
@@ -166,7 +167,9 @@ export class Game {
     }
 
     for (const system of this.systems) {
-      system.update(deltaTime, this.state);
+      if (system !== this.inputSystem) {
+        system.update(deltaTime, this.state);
+      }
     }
   }
 
