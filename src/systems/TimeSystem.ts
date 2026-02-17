@@ -139,6 +139,11 @@ export class TimeSystem implements IGameSystem {
     state.player.energy = state.player.maxEnergy;
     console.log(`💚 Energy restored to ${state.player.maxEnergy}`);
     
+    // 检查作物生长
+    if (this.farmSystem) {
+      this.farmSystem.checkCropGrowth(state);
+    }
+
     // 触发新一天事件
     this.eventBus.emit({
       type: 'TIME_CHANGED',
