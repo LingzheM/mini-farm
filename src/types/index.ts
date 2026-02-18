@@ -97,4 +97,5 @@ export type GameEvent =
     | { type: 'TILE_CHANGED'; data: { x: number; y: number; tile: TileData } }
     | { type: 'ITEM_ADD'; data: { item: ItemType; count: number } }
     | { type: 'ITEM_REMOVED'; data: { item: ItemType; count: number } }
-    | { type: 'INVENTORY_FULL'; data: null };
+    | { type: 'INVENTORY_FULL'; data: null }
+    | { type: 'CROP_HARVESTED'; data: { item: ItemType; count: number; gridX: number; gridY: number } } ;

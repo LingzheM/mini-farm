@@ -287,6 +287,16 @@ export class FarmSystem implements IGameSystem {
         console.log(`🌾 Harvested ${cropItemId} at (${x}, ${y}), Energy: ${state.player.energy}`);
 
         this.eventBus.emit({
+            type: 'CROP_HARVESTED',
+            data: { item: cropItemId, count: 1, gridX: x, gridY: y },
+        });
+
+        this.eventBus.emit({
+            type: 'ITEM_ADD',
+            data: { item: cropItemId, count: 1 },
+        });
+
+        this.eventBus.emit({
             type: 'TILE_CHANGED',
             data: { x, y, tile: newTile },
         });

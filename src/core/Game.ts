@@ -9,6 +9,7 @@ import { TimeSystem } from '../systems/TimeSystem';
 import { FarmSystem } from '../systems/FarmSystem';
 import { InventorySystem } from '../systems/InventorySystem';
 import { UISystem } from '../systems/UISystem';
+import { FloatingTextSystem } from '../systems/FloatingTextSystem';
 
 export class Game {
   public app: Application;
@@ -42,7 +43,12 @@ export class Game {
     this.inputSystem = new InputSystem();
     this.timeSystem = new TimeSystem(this.eventBus);
     this.inventorySystem = new InventorySystem(this.eventBus);
-    this.farmSystem = new FarmSystem(this.eventBus, this.inputSystem, this.gridSystem, this.inventorySystem);
+    this.farmSystem = new FarmSystem(
+      this.eventBus, 
+      this.inputSystem, 
+      this.gridSystem, 
+      this.inventorySystem
+    );
   }
 
   private createInitialState(): GameState {
@@ -98,6 +104,8 @@ export class Game {
     this.registerSystem(this.inventorySystem);
     // 注册UI系统
     this.registerSystem(new UISystem(this.app, this.farmSystem));
+    // 注册浮动文字系统
+    this.registerSystem(new FloatingTextSystem(this.app, this.eventBus));
 
     // 让时间系统知道农场系统
     this.timeSystem.setFarmSystem(this.farmSystem);
