@@ -4,7 +4,7 @@ import type { GameState } from '../types';
 
 /**
  * HUD - 抬头显示
- * 显示: 时间、体力、当前工具
+ * 显示: 时间、体力 
  */
 export class HUD {
   private app: Application;
@@ -15,10 +15,7 @@ export class HUD {
   private timeText: Text;
   private energyText: Text;
   private energyBar: Graphics;
-  private toolText: Text;
   
-  // 当前工具(从FarmSystem同步)
-  private currentTool: 'hoe' | 'seeds' | 'waterCan' = 'hoe';
   
   constructor(app: Application) {
     this.app = app;
@@ -37,7 +34,6 @@ export class HUD {
     
     this.timeText = new Text('Day 1, 06:00', textStyle);
     this.energyText = new Text('Energy: 100/100', textStyle);
-    this.toolText = new Text('Tool: Hoe', textStyle);
     
     this.setupUI();
     this.app.stage.addChild(this.container);
@@ -49,7 +45,7 @@ export class HUD {
   private setupUI(): void {
     const padding = 10;
     const panelWidth = 220;
-    const panelHeight = 120;
+    const panelHeight = 90;
     
     // 半透明背景面板
     this.background.beginFill(0x000000, 0.6);
@@ -73,10 +69,6 @@ export class HUD {
     this.energyBar.y = padding + 65;
     this.container.addChild(this.energyBar);
     
-    // 工具文本
-    this.toolText.x = padding + 10;
-    this.toolText.y = padding + 90;
-    this.container.addChild(this.toolText);
   }
 
   /**
@@ -134,27 +126,13 @@ export class HUD {
     this.energyBar.drawRoundedRect(0, 0, barWidth, barHeight, 4);
   }
 
-  /**
-   * 更新工具显示
-   */
-  updateTool(tool: 'hoe' | 'seeds' | 'waterCan'): void {
-    this.currentTool = tool;
-    
-    const toolNames = {
-      hoe: 'Hoe (锄头)',
-      seeds: 'Seeds (种子)',
-      waterCan: 'Water Can (水壶)',
-    };
-    
-    this.toolText.text = `Tool: ${toolNames[tool]}`;
-  }
+ 
 
   destroy(): void {
     this.background.destroy();
     this.timeText.destroy();
     this.energyText.destroy();
     this.energyBar.destroy();
-    this.toolText.destroy();
     this.container.destroy();
   }
 }
