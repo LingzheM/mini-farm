@@ -1,128 +1,108 @@
-# Mini Farm Game 🌱
+# Mini Farm
 
-一个用 TypeScript + PixiJS 开发的迷你农场游戏 (星露谷物语风格)
+A browser-based farming game inspired by Stardew Valley, built with TypeScript and PixiJS.
+
+<!-- TODO: 补充截图或 GIF 演示 -->
+<!-- TODO: 补充在线 Demo 链接（如有部署） -->
 
 ---
 
-## 快速开始
+## Features
 
-### 安装依赖
+| Status | Feature |
+|--------|---------|
+| ✅ | Player movement (WASD / Arrow Keys) |
+| ✅ | Grid-based world (20×15 tiles) |
+| ✅ | Tool system — Hoe / Seeds / Watering Can |
+| ✅ | Farming loop — till → plant → water → harvest |
+| ✅ | Crop growth over 3 in-game days (Potato, Tomato) |
+| ✅ | Time system — day/hour/minute with configurable time scale |
+| ✅ | Energy system — restored each new day |
+| ✅ | Inventory system — 24 slots, stackable items |
+| ✅ | HUD — time, energy, active tool |
+| ✅ | Toolbar UI + floating harvest text |
+| 🚧 | Sleep system / end-of-day settlement |
+| 🚧 | Shipping box — sell crops for gold |
+| 🚧 | Gold / economy system |
+| 🚧 | Sound effects |
+| 🚧 | Visual polish |
+
+---
+
+## Tech Stack
+
+- **TypeScript 5** — type safety throughout
+- **PixiJS v7** — 2D WebGL rendering
+- **Vite 5** — dev server and build tool
+
+No backend. No environment variables required.
+
+---
+
+## Quick Start
+
+**Prerequisites:** Node.js ≥ 18
+
 ```bash
 npm install
-```
-
-### 运行游戏
-```bash
 npm run dev
 ```
 
-然后打开浏览器访问: `http://localhost:5173`
+Open `http://localhost:5173` in your browser.
 
-### 构建生产版本
 ```bash
+# Production build
 npm run build
 ```
 
 ---
 
-## 操作指南
+## Controls
 
-### 移动
-- **WASD** 或 **方向键** - 移动玩家
+| Key | Action |
+|-----|--------|
+| WASD / Arrow Keys | Move |
+| `1` | Equip Hoe |
+| `2` | Equip Seeds |
+| `3` | Equip Watering Can |
+| `Space` | Use tool / Harvest mature crop |
+| `B` | Open / close inventory |
 
-### 农场操作
-- **[1]** - 装备锄头 (耕地)
-- **[2]** - 装备种子 (播种)
-- **[3]** - 装备水壶 (浇水)
-- **[Space]** - 使用当前工具
-
-### 游戏流程
-1. 按 `[1]` 装备锄头,面向草地按 `Space` 耕地
-2. 按 `[2]` 装备种子,面向耕地按 `Space` 播种
-3. 按 `[3]` 装备水壶,面向作物按 `Space` 浇水
-4. 等待 3 天,作物成熟(金黄色)
+**Farming loop:** Till `[1+Space]` → Plant `[2+Space]` → Water `[3+Space]` → Wait 3 days → Harvest `[Space]`
 
 ---
 
-## UI 说明
+## Project Structure
 
-**左上角面板:**
-- **Day X, HH:MM** - 当前游戏时间
-- **Energy: XX/100** - 体力值(每个动作消耗体力,新的一天自动恢复)
-- **Tool: XXX** - 当前装备的工具
-
----
-
-## 调试命令
-
-打开浏览器控制台(F12),可以使用以下命令:
-
-```javascript
-// 查看游戏状态
-game.state
-
-// 加速时间 (1秒 = 2小时)
-game.timeSystem.setTimeScale(120, game.state)
-
-// 跳到第4天 (查看作物成熟)
-game.timeSystem.setTime(4, 6, 0, game.state)
-
-// 恢复正常时间流速 (1秒 = 10分钟)
-game.timeSystem.setTimeScale(10, game.state)
+```
+src/
+├── core/          # Game loop (Game.ts), EventBus
+├── systems/       # Farm, Time, Inventory, Input, Player, UI, FloatingText
+├── entities/      # Player entity
+├── ui/            # HUD, ToolbarUI, InventoryUI
+├── config/        # Item catalog (items.ts)
+├── types/         # Shared TypeScript interfaces (index.ts)
+└── utils/         # Constants — canvas size, grid, FPS
 ```
 
 ---
 
-## 常见问题
+## Debug Commands (Browser Console)
 
-### Q: 修改了代码但没有变化?
-**A:** 重启开发服务器 (`Ctrl+C` 然后重新 `npm run dev`)
-
-### Q: 想添加新功能或修改游戏参数?
-**A:** 查看 `QUICK_REFERENCE.md` 文档
-
-### Q: 体力用完了怎么办?
-**A:** 等待新的一天(游戏时间会自动流逝),或使用调试命令跳到第2天
-
-### Q: 作物一直不成熟?
-**A:** 需要等待3个游戏日,使用 `game.timeSystem.setTime(4, 6, 0, game.state)` 快速测试
-
----
-
-## 技术栈
-
-- **TypeScript** - 类型安全
-- **PixiJS v7** - 2D渲染引擎
-- **Vite** - 构建工具
-
----
-
-## 项目结构
-
-```
-mini-farm/
-├── src/
-│   ├── core/          # 核心系统(游戏循环、事件总线)
-│   ├── systems/       # 游戏系统(网格、玩家、时间、农场、输入、UI)
-│   ├── entities/      # 游戏实体(玩家)
-│   ├── ui/            # UI组件(HUD)
-│   ├── types/         # TypeScript类型定义
-│   ├── utils/         # 工具函数和常量
-│   └── main.ts        # 入口文件
-├── index.html
-├── package.json
-└── tsconfig.json
+```js
+game.timeSystem.setTimeScale(120, game.state)   // 1 sec = 2 game hours
+game.timeSystem.setTime(4, 6, 0, game.state)    // jump to day 4
+game.inventorySystem.addItem('crop_potato', 10, game.state)
+game.state                                       // inspect full state
 ```
 
 ---
 
-## 下一步开发
+## Roadmap
 
-想要修改或扩展游戏?查看 **QUICK_REFERENCE.md** 获取:
-- 常见需求的修改位置
-- 文件依赖关系
-- 危险区域提示
-- 扩展建议
+See [TODO.md](TODO.md) for the full issue and feature list.
+
+**Next milestone:** shipping box + gold system — closes the core farming loop so harvested crops have a destination.
 
 ---
 
